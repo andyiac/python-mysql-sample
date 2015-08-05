@@ -12,6 +12,15 @@ def hello_world():
   score = storage.score()
   return "Hello world dao cloud, %d!" % score
 
+@application.route('/getrank')
+def hello_world():
+  storage = Storage()
+  storage.populate()
+  score = storage.score()
+  return "Hello githubrank, %d!" % score
+
+
+
 class Storage():
   def __init__(self):
     self.db = MySQLdb.connect(
@@ -38,3 +47,4 @@ class Storage():
 
 if __name__ == "__main__":
   application.run(host='0.0.0.0', port=3000)
+
