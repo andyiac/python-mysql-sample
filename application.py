@@ -10,16 +10,7 @@ def hello_world():
   storage = Storage()
   storage.populate()
   score = storage.score()
-  return "Hello world dao cloud, %d!" % score
-
-@application.route('/getrank')
-def hello_world():
-  storage = Storage()
-  storage.populate()
-  score = storage.score()
-  return "Hello githubrank, %d!" % score
-
-
+  return "Hello world git rank, %d!" % score
 
 class Storage():
   def __init__(self):
