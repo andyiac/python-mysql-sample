@@ -10,7 +10,8 @@ def hello_world():
   storage = Storage()
   storage.populate()
   score = storage.score()
-  return "Hello world, %d!" % score
+  rank = score.ranking()
+  return "ranking , %d!" % rank
 
 class Storage():
   def __init__(self):
@@ -25,6 +26,19 @@ class Storage():
     cur = self.db.cursor()
     cur.execute("DROP TABLE IF EXISTS scores")
     cur.execute("CREATE TABLE scores(score INT)")
+    cur.execute("DROP TABLE IF EXISTS ranking")
+
+    sql = """CREATE TABLE ranking(rank INT,
+      gravatar varchar(30),
+      username varchar(30),
+      name varchar(30))
+      location varchar(30)
+      language varchar(30)
+      repos varchar(30)
+      followers varchar(30)
+      created varchar(30)"""
+
+    cur.execute(sql)
 
   def populate(self):
     cur = self.db.cursor()
@@ -35,6 +49,16 @@ class Storage():
     cur.execute("SELECT * FROM scores")
     row = cur.fetchone()
     return row[0]
+
+  def saveRankingPerson(self):
+    cur = self.db.cursor()
+    cur.execute("INSERT INTO ranking('1','http://www.baidu.com/a.png','andyiac','summer','beijing','java','30','100','2014-10-10')")
+
+  def ranking(self):
+    cur = self.db.cursor()
+    cur.execute("SELECT * FROM ranking")
+    row = cur.fetchone()
+    return row[0]  
 
 if __name__ == "__main__":
   application.run(host='0.0.0.0', port=3000)
