@@ -42,7 +42,7 @@ class Storage():
 
   def saveRankingPerson(self):
     cur = self.db.cursor()
-    cur.execute("INSERT INTO ranking('1','http://www.baidu.com/a.png','andyiac','summer','beijing','java','30','100','2014-10-10')")
+    cur.execute("INSERT INTO ranking(rank,gravatar,username,name,location,language,repos,followers,created) VALUES('1','http://www.baidu.com/a.png','andyiac','summer','beijing','java','30','100','2014-10-10')")
 
   def ranking(self):
     cur = self.db.cursor()
