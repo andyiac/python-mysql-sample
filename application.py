@@ -28,7 +28,7 @@ class Storage():
     cur.execute("DROP TABLE IF EXISTS scores")
     cur.execute("CREATE TABLE scores(score INT)")
     cur.execute("DROP TABLE IF EXISTS ranking")
-    cur.execute("CREATE TABLE ranking(rank INT,gravatar varchar(30),username varchar(30),name varchar(30),location varchar(30),language varchar(30),repos varchar(30),followers varchar(30),created varchar(30))")
+    cur.execute("CREATE TABLE ranking(rank varchar(20),gravatar varchar(30),username varchar(30),name varchar(30),location varchar(30),language varchar(30),repos varchar(30),followers varchar(30),created varchar(30))")
 
   def populate(self):
     cur = self.db.cursor()
