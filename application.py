@@ -8,8 +8,9 @@ application.debug = True
 @application.route('/')
 def hello_world():
   storage = Storage()
-  storage.populate()
-  score = storage.score()
+#  storage.populate()
+#  score = storage.score()
+  storage.saveRankingPerson() 
   rank = score.ranking()
   return "ranking , %d!" % rank
 
