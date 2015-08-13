@@ -1,6 +1,11 @@
 import os
 import flask
 import MySQLdb
+import requests
+import BeautifulSoup
+import sys
+reload(sys) 
+sys.setdefaultencoding('utf8')
 
 application = flask.Flask(__name__)
 application.debug = True
@@ -14,6 +19,11 @@ def hello_world():
   rank = score.ranking()
   return "ranking , %d!" % rank
 
+@application.route('/crowler')
+def crowler():
+  return "this is crowler"
+
+
 class Storage():
   def __init__(self):
     self.db = MySQLdb.connect(
@@ -25,20 +35,7 @@ class Storage():
     )
 
     cur = self.db.cursor()
-    cur.execute("DROP TABLE IF EXISTS scores")
-    cur.execute("CREATE TABLE scores(score INT)")
-    cur.execute("DROP TABLE IF EXISTS ranking")
-    cur.execute("CREATE TABLE ranking(rank varchar(20),gravatar varchar(30),username varchar(30),name varchar(30),location varchar(30),language varchar(30),repos varchar(30),followers varchar(30),created varchar(30))")
-
-  def populate(self):
-    cur = self.db.cursor()
-    cur.execute("INSERT INTO scores(score) VALUES(1234)")
-
-  def score(self):
-    cur = self.db.cursor()
-    cur.execute("SELECT * FROM scores")
-    row = cur.fetchone()
-    return row[0]
+    cur.execute("CREATE TABLE IF NOT EXISTS ranking(rank varchar(20),gravatar varchar(30),username varchar(30),name varchar(30),location varchar(30),language varchar(30),repos varchar(30),followers varchar(30),created varchar(30))")
 
   def saveRankingPerson(self):
     cur = self.db.cursor()
@@ -48,7 +45,36 @@ class Storage():
     cur = self.db.cursor()
     cur.execute("SELECT * FROM ranking")
     row = cur.fetchone()
-    return row[0]  
+    return row[0] 
 
+  def crowler(self):
+    # crawler ranking
+    r = requests.get("http://githubrank.com")
+    soup = BeautifulSoup(r.text)
+
+    table = soup.find('table')
+    for i in range(2,1000 + 2):
+      rows = table.findAll('tr')[i]
+      cols = rows.findAll('td')
+
+      Rank = cols[0].string
+      Gravatar = cols[1].img.get('src')
+      username = cols[2].string
+      name = cols[3].string
+      location = cols[4].string
+      language = cols[5].string
+      repos = cols[6].string
+      followers = cols[7].string
+      created = cols[8].string
+
+      values = [Rank,Gravatar,username,name,location,language,repos,followers,created]
+      cur = self.db.cursor()
+      cur.execute("INSERT INTO ranking(rank,gravatar,username,name,location,language,repos,followers,created) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s)",values)
+      self.db.commit()
+      cur.close()
+      print "insert -->" + Rank
+    self.db.close()
+
+    return "true"
 if __name__ == "__main__":
   application.run(host='0.0.0.0', port=3000)
